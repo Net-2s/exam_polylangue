@@ -1,6 +1,8 @@
 from odoo import fields, models, api, _
 from datetime import datetime, timedelta, date
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class inscription(models.Model):
     _name = 'examen.inscription'
@@ -137,6 +139,10 @@ class inscription(models.Model):
     def _get_default_journal(self):
         self.ensure_one()
         journal = self.env['account.journal'].sudo().search([('type','=','sale'), ('company_id','=',self._get_invoiced_company().id)], limit=1)
+
+        # _logger.critical("=========================================== DEFAULT JOURNAL ======================================")
+        # _logger.critical(journal.name)
+        
         if not journal:
             journal = self.env['account.journal'].sudo().create({
                 'name': "Inscription examen",
@@ -168,8 +174,8 @@ class inscription(models.Model):
         self.ensure_one()
         if not self.invoice_id:
             invoice_data = {
-                'partner_id': self.responsable_id.branch_id.company_id.partner_id.id, 
-                'branch_id': self.responsable_id.branch_id.id,
+                'partner_id': self.sudo().responsable_id.branch_id.company_id.partner_id.id, 
+                'branch_id': self.sudo().responsable_id.branch_id.id,
                 'move_type': 'out_invoice',
                 'invoice_date':fields.Date.today(),
                 'session_id': self.session_id.id,
@@ -179,8 +185,8 @@ class inscription(models.Model):
                 self.invoice_id = self.env['account.move'].sudo().create(invoice_data)
             except Exception as e:
                 simalars_partner = self.env['res.partner'].sudo().search([
-                    ('name','=',self.responsable_id.branch_id.company_id.partner_id.name),
-                    ('id','!=',self.responsable_id.branch_id.company_id.partner_id.id),
+                    ('name','=',self.sudo().responsable_id.branch_id.company_id.partner_id.name),
+                    ('id','!=',self.sudo().responsable_id.branch_id.company_id.partner_id.id),
                     ('is_company','=',True)])
                 for partner in simalars_partner:
                     invoice_data['partner_id'] = partner.id
@@ -215,8 +221,6 @@ class inscription(models.Model):
                 'quantity': self._compute_nbr_insciption() - self._get_nbr_already_paid(), 
                 # 'account_id': insc.session_id.examen_id.account_id.id, 
             })
-
-       
 
     def _post_invoice(self):
         self.ensure_one()
