@@ -140,8 +140,8 @@ class inscription(models.Model):
         self.ensure_one()
         journal = self.env['account.journal'].sudo().search([('type','=','sale'), ('company_id','=',self._get_invoiced_company().id)], limit=1)
 
-        # _logger.critical("=========================================== DEFAULT JOURNAL ======================================")
-        # _logger.critical(journal.name)
+        _logger.critical("=========================================== DEFAULT JOURNAL ======================================")
+        _logger.critical(journal.name)
         
         if not journal:
             journal = self.env['account.journal'].sudo().create({
@@ -179,11 +179,15 @@ class inscription(models.Model):
                 'move_type': 'out_invoice',
                 'invoice_date':fields.Date.today(),
                 'session_id': self.session_id.id,
-                'journal_id': self._get_default_journal().id
+                'journal_id': self._get_default_journal().id,
+                'company_id': self._get_invoiced_company().id,
+                'currency_id': self._get_invoiced_company().currency_id.id,
             }
             try :
                 self.invoice_id = self.env['account.move'].sudo().create(invoice_data)
             except Exception as e:
+                _logger.critical("=========================================== CREATE INVOICE ======================================")
+                _logger.critical(e)
                 simalars_partner = self.env['res.partner'].sudo().search([
                     ('name','=',self.sudo().responsable_id.branch_id.company_id.partner_id.name),
                     ('id','!=',self.sudo().responsable_id.branch_id.company_id.partner_id.id),
@@ -202,6 +206,9 @@ class inscription(models.Model):
 
         # create new product line
         
+        _logger.critical("=========================================== CREATE INVOICE LINE ======================================")
+        _logger.critical(self.invoice_id.id)
+
         self.env['account.move.line'].sudo().create({
                 'move_id': self.invoice_id.id,
                 'product_id': self.session_id.examen_id.id,
