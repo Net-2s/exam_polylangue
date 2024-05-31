@@ -65,7 +65,6 @@ class RegistrationFolder(models.Model):
         string='FAST PASS',
         store=True,
     )
-    selected = fields.Boolean(string="")
     
 
     
