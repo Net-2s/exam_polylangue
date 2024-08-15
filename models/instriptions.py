@@ -5,6 +5,8 @@ import logging
 class inscription(models.Model):
     _name = 'examen.inscription'
     _description = "Inscriptions aux examens"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
 
     STATUS = [
         ('draft', 'Brouillon'),
@@ -23,23 +25,23 @@ class inscription(models.Model):
         ('invoicing_legacy', "Héritage de l'application de facturation"),
     ]
 
-    session_id = fields.Many2one(comodel_name="examen.session", required=True)
+    session_id = fields.Many2one(comodel_name="examen.session", required=True, tracking=True)
 
-    participant_edof = fields.Many2many("edof.registration.folder", relation='inscription_participant_hors_cpf_rel')
-    participant_hors_cpf = fields.Many2many("gestion.formation.dossier", relation='inscription_participant_edof_rel')
-    participant_archive_edof = fields.Many2many(comodel_name='edof.data.archive',relation='inscription_edof_data_archive_rel')
+    participant_edof = fields.Many2many("edof.registration.folder", relation='inscription_participant_hors_cpf_rel', tracking=True)
+    participant_hors_cpf = fields.Many2many("gestion.formation.dossier", relation='inscription_participant_edof_rel', tracking=True)
+    participant_archive_edof = fields.Many2many(comodel_name='edof.data.archive',relation='inscription_edof_data_archive_rel', tracking=True)
 
-    responsable_id = fields.Many2one("res.users", string="Responsable", related='session_id.responsable_id', store=True)
+    responsable_id = fields.Many2one("res.users", string="Responsable", related='session_id.responsable_id', store=True, tracking=True)
     branch_ids = fields.Many2many("res.branch", string="Branches", related='responsable_id.branch_ids',
-                                relation="inscription_branch_rel", column1="inscriptions", column2="branchs")
+                                relation="inscription_branch_rel", column1="inscriptions", column2="branchs", tracking=True)
     
-    status = fields.Selection(selection=STATUS, compute="_compute_status", string='Etat', default='draft', store=True)
+    status = fields.Selection(selection=STATUS, compute="_compute_status", string='Etat', default='draft', store=True, tracking=True)
     # status_payment = fields.Selection(selection=STATUS, compute="_compute_status", string='Etat', default='draft', store=True)
-    invoice_id = fields.Many2one('account.move', required=False, default=None)
-    status_paiment = fields.Selection(PAYMENT_STATE_SELECTION,readonly=True, compute="_compute_payment_state", store=True, default="not_paid")
+    invoice_id = fields.Many2one('account.move', required=False, default=None, tracking=True)
+    status_paiment = fields.Selection(PAYMENT_STATE_SELECTION,readonly=True, compute="_compute_payment_state", store=True, default="not_paid", tracking=True)
     comments = fields.Text(
         string="Commentaires", 
-        store=True
+        store=True, tracking=True
     )
 
     
