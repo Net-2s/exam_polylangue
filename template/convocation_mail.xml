@@ -4,9 +4,9 @@
     <template id="comvocation_exam_hors_cpf_template" name="Convocation exam Hors cpf">
         
         <div style="margin: 0px; padding: 0px;">
-            <div class="text-end py-2" >
+            <!-- <div class="text-end py-2" >
                 Emit le <span class="fw-bold" t-esc="datetime.datetime.now().strftime('%d/%m/%Y')" />
-            </div>
+            </div> -->
             <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">
                 Bonjour 
                 <t t-if="object.first_name">
@@ -58,9 +58,9 @@
 
     <template id="comvocation_exam_edof_template" name="Convocation exam Hors cpf">
         <div style="margin: 10px; padding: 20px; font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5;">
-            <div class="text-end" style="padding-bottom: 10px;">
+            <!-- <div class="text-end" style="padding-bottom: 10px;">
                 Émit le <span class="fw-bold" t-esc="datetime.datetime.now().strftime('%d/%m/%Y')" />
-            </div>
+            </div> -->
 
             <h1 class="text-center text-primary border-primary border-top border-bottom" style="margin: 30px 0; padding: 15px; font-size: 20px; font-weight: bold;">
                 Convocation au Test de fin de formation
@@ -180,9 +180,9 @@
     <template id="comvocation_exam_archive_edof_template" name="Convocation exam Archive Edof">
         
         <div style="margin: 0px; padding: 0px;">
-            <div class="text-end py-2" >
+            <!-- <div class="text-end py-2" >
                 Emit le <span class="fw-bold" t-esc="datetime.datetime.now().strftime('%d/%m/%Y')" />
-            </div>
+            </div> -->
             <p style="box-sizing:border-box;margin: 0px; padding: 0px; font-size: 13px;">
                 Bonjour 
                 <t t-if="object.attendee_first_name">
